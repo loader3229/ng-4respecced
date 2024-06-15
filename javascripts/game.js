@@ -3310,10 +3310,12 @@ function updateLastTenRuns() {
     if (ippm<1) tempstring = shorten(ippm*60) + " IP/hour"
     document.getElementById("averagerun").textContent = "Last 10 infinities average time: "+ timeDisplayShort(tempTime)+" Average IP gain: "+shortenDimensions(tempIP)+" IP. "+tempstring
 
+if(tempBest){
     if (tempBest.gte(1e8)) giveAchievement("Oh hey, you're still here");
     if (tempBest.gte(1e300)) giveAchievement("MAXIMUM OVERDRIVE");
 
     bestRunIppm = tempBest
+}
 }
 
 var averageEp = new Decimal(0)
