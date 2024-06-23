@@ -1,4 +1,4 @@
-var newGame4MinusRespeccedVersion = 2.91
+var newGame4MinusRespeccedVersion = 2.92
 /*
 var temp=Math.log10;
 Math.log10=(function(a){if(a<0)debugger;b=this;return b(a);}).bind(temp);
@@ -2398,6 +2398,12 @@ document.getElementById("importbtn").onclick = function () {
         timeMultNum = 1
         timeMultNum2 = 1
         player = save_data;
+		if(player.aarexModifications.newGame4MinusRespeccedVersion >= 3){
+			for(var i in player.challenges){
+				if(player.challenges[i]=="postcngmm_1")player.challenges[i]="postc1";
+				if(player.challenges[i]=="postcngmm_2")player.challenges[i]="postc2";
+			}
+		}
         save_game();
         load_game();
         updateChallenges()
@@ -3629,8 +3635,8 @@ document.getElementById("bigcrunch").onclick = function () {
 
 	resetTimeDimensions(1);
         if (player.challenges.length >= 2) giveAchievement("Daredevil");
-        if (player.challenges.length == 14) giveAchievement("AntiChallenged");
-        if (player.challenges.length == 24) giveAchievement("Anti-antichallenged");
+        if (player.challenges.length >= 14) giveAchievement("AntiChallenged");
+        if (player.challenges.length >= 24) giveAchievement("Anti-antichallenged");
 
         if (player.bestInfinityTime <= 0.01) giveAchievement("Less than or equal to 0.001");
 
