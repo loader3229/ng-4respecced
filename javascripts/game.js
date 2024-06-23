@@ -990,6 +990,22 @@ function updateDimensions() {
 }
 
 function updateCosts() {
+	if(!((player.currentChallenge == "postc2" || player.currentChallenge == "challenge5") || (player.currentChallenge == "postc4" || player.currentChallenge == "challenge10") || !player.break)){
+		for (var i=1; i<=8; i++){
+			var name=TIER_NAMES[i];
+			var initCost1=initCost[i];
+			if(player.galacticSacrifice.upgrades.includes(11) && !player.galacticSacrifice.upgrades.includes(81))initCost1=initCost1.div(galUpgrade11());
+			var costMults1=costMults[i];
+			var preInfBuy = Math.floor(1 + (1024 * Math.log10(2) - initCost1.log10()) / costMults1.log10())
+			var bought=Math.floor(player[TIER_NAMES[i]+'TotalBought']/10);
+			player[name+'Cost']=initCost1.mul(Decimal.pow(costMults1,bought));
+			if(bought>=preInfBuy){
+				player[name+'Cost']=player[name+'Cost'].mul(Decimal.pow(getDimensionCostMultiplierIncrease(),(bought-preInfBuy)*(bought-preInfBuy+1)/2));
+				player.costMultipliers[i-1]=costMults1.mul(Decimal.pow(getDimensionCostMultiplierIncrease(),bought-preInfBuy+1));
+			}
+		}
+	}
+	
     document.getElementById("first").textContent = 'Cost: ' + shortenCosts(player.firstCost);
     document.getElementById("second").textContent = 'Cost: ' + shortenCosts(player.secondCost);
     document.getElementById("third").textContent = 'Cost: ' + shortenCosts(player.thirdCost);
@@ -1009,37 +1025,47 @@ function updateCosts() {
     document.getElementById("eightMax").textContent = 'Until 10, Cost: ' + shortenCosts(player.eightCost.times(10 - dimBought(8)));
 
     document.getElementById("tickSpeed").textContent = 'Cost: ' + shortenCosts(player.tickSpeedCost);
-
-
+	
     for (var i=1; i<=8; i++) {
-
+		var dim = player["infinityDimension"+i]
+		dim.cost = new Decimal(infBaseCost[i]).times(Decimal.pow(infCostMults[i]/getInfBuy10CostDiv(i), (dim.baseAmount/10)*(ECTimesCompleted("eterc12")?1-ECTimesCompleted("eterc12")*0.008:1)))
+		
         document.getElementById("infMax"+i).textContent = "Cost: " + shortenCosts(player["infinityDimension"+i].cost) + " IP"
     }
 
     for (var i=1; i<=8; i++) {
-
-        document.getElementById("timeMax"+i).textContent = "Cost: " + shortenDimensions(player["timeDimension"+i].cost) + " EP"
-    }
-
-    for (var i=1; i<=8; i++) {
 		var dim = player["timeDimension"+i]
+		
+		  dim.cost = Decimal.pow(timeDimCostMults[i], dim.bought).times(timeDimStartCosts[i])
+		  if (dim.cost.gte(Number.MAX_VALUE)) {
+			  dim.cost = Decimal.pow(timeDimCostMults[i]*1.5, dim.bought).times(timeDimStartCosts[i])
+		  }
+		  if (dim.cost.gte("1e1300")) {
+			  dim.cost = Decimal.pow(timeDimCostMults[i]*2.2, dim.bought).times(timeDimStartCosts[i])
+		  }
+		  if (i > 4) {
+			dim.cost = Decimal.pow(timeDimCostMults[i]*100, dim.bought).times(timeDimStartCosts[i])
+		  }
+		  
 		dim.costAntimatter = Decimal.pow(timeDimCostMultsAntimatter[i], dim.boughtAntimatter).times(timeDimStartCostsAntimatter[i])
-  if (dim.costAntimatter.gte(Number.MAX_VALUE)) {
-      dim.costAntimatter = Decimal.pow(timeDimCostMultsAntimatter[i]*1.5, dim.boughtAntimatter).times(timeDimStartCostsAntimatter[i])
-  }
-  if (dim.costAntimatter.gte("1e5000")) {
-      dim.costAntimatter = Decimal.pow(timeDimCostMultsAntimatter[i]*2, dim.boughtAntimatter).times(timeDimStartCostsAntimatter[i])
-  }
-  if (dim.costAntimatter.gte("1e50000")) {
-      dim.costAntimatter = Decimal.pow(timeDimCostMultsAntimatter[i]*getTDFinalScaling(i,dim.boughtAntimatter), dim.boughtAntimatter).times(timeDimStartCostsAntimatter[i])
-  }
-  if (player.currentChallenge == "postcngm3_1"){
-	  dim.costAntimatter = Decimal.pow(timeDimCostMultsAntimatter[i], (Math.pow(1.01,dim.boughtAntimatter)-1)*100).times(timeDimStartCostsAntimatter[i]);
-	  if(Math.pow(1.01,dim.boughtAntimatter) >= 1e100 || dim.costAntimatter.gte("0.99e9000000000000000"))dim.costAntimatter=new Decimal("0.99e9000000000000000");
-  }
-  if (player.galacticSacrifice.upgrades.includes(11) && !player.galacticSacrifice.upgrades.includes(81)) dim.costAntimatter =  dim.costAntimatter.div(galUpgrade11())
-  if (player.galacticSacrifice.upgrades.includes(63)) dim.costAntimatter =  dim.costAntimatter.div(galUpgrade63())
-        document.getElementById("timeMax"+i+"Antimatter").textContent = "Cost: " + shortenDimensions(player["timeDimension"+i].costAntimatter)
+		  if (dim.costAntimatter.gte(Number.MAX_VALUE)) {
+			  dim.costAntimatter = Decimal.pow(timeDimCostMultsAntimatter[i]*1.5, dim.boughtAntimatter).times(timeDimStartCostsAntimatter[i])
+		  }
+		  if (dim.costAntimatter.gte("1e5000")) {
+			  dim.costAntimatter = Decimal.pow(timeDimCostMultsAntimatter[i]*2, dim.boughtAntimatter).times(timeDimStartCostsAntimatter[i])
+		  }
+		  if (dim.costAntimatter.gte("1e50000")) {
+			  dim.costAntimatter = Decimal.pow(timeDimCostMultsAntimatter[i]*getTDFinalScaling(i,dim.boughtAntimatter), dim.boughtAntimatter).times(timeDimStartCostsAntimatter[i])
+		  }
+		  if (player.currentChallenge == "postcngm3_1"){
+			  dim.costAntimatter = Decimal.pow(timeDimCostMultsAntimatter[i], (Math.pow(1.01,dim.boughtAntimatter)-1)*100).times(timeDimStartCostsAntimatter[i]);
+			  if(Math.pow(1.01,dim.boughtAntimatter) >= 1e100 || dim.costAntimatter.gte("0.99e9000000000000000"))dim.costAntimatter=new Decimal("0.99e9000000000000000");
+		  }
+		  if (player.galacticSacrifice.upgrades.includes(11) && !player.galacticSacrifice.upgrades.includes(81)) dim.costAntimatter =  dim.costAntimatter.div(galUpgrade11())
+		  if (player.galacticSacrifice.upgrades.includes(63)) dim.costAntimatter =  dim.costAntimatter.div(galUpgrade63())
+			  
+        document.getElementById("timeMax"+i).textContent = "Cost: " + shortenDimensions(dim.cost) + " EP"
+        document.getElementById("timeMax"+i+"Antimatter").textContent = "Cost: " + shortenDimensions(dim.costAntimatter)
     }
 }
 

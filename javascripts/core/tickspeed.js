@@ -131,9 +131,9 @@ function buyMaxTickSpeed() {
   if (!canBuyTickSpeed()) return false
   var mult = getTickSpeedMultiplier()
   if (player.currentChallenge == "challenge2" || player.currentChallenge == "postc4") player.chall2Pow = 0
-  if (player.currentChallenge == "challenge5" || player.currentChallenge == "postc7" || player.tickSpeedCost.lt(Number.MAX_VALUE) || player.tickSpeedMultDecrease > 2) {
+  if (player.currentChallenge == "challenge5" || player.tickSpeedCost.lt(Number.MAX_VALUE)) {
       var buying = 0;
-	  while (player.money.gte(player.tickSpeedCost) && canBuyTickSpeed() && (player.tickSpeedCost.lt(Number.MAX_VALUE) || player.tickSpeedMultDecrease > 2 || player.currentChallenge == "postc7")) {
+	  while (player.money.gte(player.tickSpeedCost) && canBuyTickSpeed() && (player.tickSpeedCost.lt(Number.MAX_VALUE))) {
           player.money = player.money.minus(player.tickSpeedCost);
           player.tickBoughtThisInf.current++;
 		  buying++;
