@@ -2403,13 +2403,15 @@ document.getElementById("importbtn").onclick = function () {
         player.options.secretThemeKey = save_data;
         setTheme(player.options.theme);
     } else {
-        save_data = JSON.parse(atob(save_data), function(k, v) { return (v === Infinity) ? "Infinity" : v; });
-        if(verify_save(save_data)) forceHardReset = true
-        if(verify_save(save_data)) document.getElementById("reset").click();
-        forceHardReset = false
-        if (!save_data || !verify_save(save_data)) {
-            alert('could not load the save..');
-            load_custom_game();
+		try{
+			save_data = JSON.parse(atob(save_data), function(k, v) { return (v === Infinity) ? "Infinity" : v; });
+		}catch(e){}
+        if(save_data && verify_save(save_data)){
+			forceHardReset = true
+			document.getElementById("reset").click();
+			forceHardReset = false
+		}else{
+            alert('Your save is invalid.');
             return;
 		}
         saved = 0;
@@ -2426,11 +2428,9 @@ document.getElementById("importbtn").onclick = function () {
         timeMultNum = 1
         timeMultNum2 = 1
         player = save_data;
-		NGM4Rv3 = false;
 		if(player.aarexModifications.newGame4MinusRespeccedVersion >= 3){
-			NGM4Rv3 = true;
-		}
-		if(NGM4Rv3){
+			alert("You are loading a save from NG-4R v3 to v2. Tickspeed, Normal Dimensions and Time Dimensions are reset, NG-4R v3 Autobuyer states are saved for importing to NG-4R v3 later.");
+			transformSaveToDecimal();
 			for(var i in player.challenges){
 				if(player.challenges[i]=="challenge15")player.challenges.splice(i,1);
 				if(player.challenges[i]=="challenge16")player.challenges.splice(i,1);
@@ -2443,34 +2443,53 @@ document.getElementById("importbtn").onclick = function () {
 				if(player.challenges[i]=="NG-4Rv3_IC2")player.challenges[i]="postc2";
 				if(player.challenges[i]=="NG-4Rv3_IC3")player.challenges[i]="postcngm3_1";
 			}
-		}
-		if(NGM4Rv3){
-			alert("You are loading a save from NG-4R v3. Autobuyers and time dimensions are reset.");
-			player.autobuyers=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-			for(var i=1;i<=8;i++){
-				var td=player["timeDimension"+i];
-				td.amount=new Decimal(td.bought);
-				td.power=Decimal.pow(100,td.bought);
-				td.cost=new Decimal("1e99999999");
-				td.costAntimatter=new Decimal("1e99999999");
-				td.boughtAntimatter=0;
-				player["timeDimension"+i]=td;
-				player.timeShards=new Decimal(0);
-			}
-			player.timeless={
+			player.timeless=(player.timeless || {
 				active: false,
 				shards: new Decimal(0),
 				points: new Decimal(0),
 				upgrades: [],
 				rebuyables: {
 				}
+			});
+			player.NGM4Rv3autobuyers=player.autobuyers;
+			player.autobuyers=(player.NGM4Rv2autobuyers || ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]));
+			delete player.NGM4Rv2autobuyers;
+			for (var i=1; i<=8; i++){
+				var name=TIER_NAMES[i];
+				player[name+'Amount']=new Decimal(0);
+				player[name+'Pow']=getDimensionBoostPower().pow(player.resets-i+1).max(1);
+				player[name+'Bought']=0;
+				player[name+'TotalBought']=0;
+				var initCost1=initCost[i];
+				if(player.galacticSacrifice.upgrades.includes(11) && !player.galacticSacrifice.upgrades.includes(81))initCost1=initCost1.div(galUpgrade11());
+				var costMults1=costMults[i];
+				player[name+'Cost']=initCost1;
+				player.costMultipliers[i-1]=costMults1;
+			}
+			resetTimeDimensions();
+			
+			player.tickSpeedCost=new Decimal(1000);
+			player.tickspeed=new Decimal(10000);
+			  if (player.achievements.includes("r36")) player.tickspeed = player.tickspeed.times(0.98);
+			  if (player.achievements.includes("r45")) player.tickspeed = player.tickspeed.times(0.98);
+			  if (player.achievements.includes("r66")) player.tickspeed = player.tickspeed.times(0.98);
+			  if (player.achievements.includes("r83")) player.tickspeed = player.tickspeed.times(Decimal.pow(0.95,player.galaxies));
+			player.postC3Reward=new Decimal(1);
+			player.timeShards=new Decimal(0);
+			player.totalTickGained=0;
+			player.tickThreshold=new Decimal(1);
+			player.aarexModifications={
+				ngmX: 4,
+				ngmm: 3,
+				ngm4r: 1,
+				newGame4MinusRespeccedVersion: newGame4MinusRespeccedVersion,
+				ls: player.aarexModifications.ls
 			};
+			if(!player.aarexModifications.ls)delete player.aarexModifications.ls;
+			player.version=13;
 		}
         save_game();
 		document.location.reload();
-        //load_game();
-        //updateChallenges()
-        //transformSaveToDecimal()
     }
 };
 
