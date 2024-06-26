@@ -2424,10 +2424,14 @@ document.getElementById("importbtn").onclick = function () {
         timeMultNum = 1
         timeMultNum2 = 1
         player = save_data;
+		NGM4Rv3 = false;
 		if(player.aarexModifications.newGame4MinusRespeccedVersion >= 3){
+			NGM4Rv3 = true;
+		}
+		if(NGM4Rv3){
 			for(var i in player.challenges){
-				if(player.challenges[i]=="challenge15")player.challenges=player.challenges.splice(i,1);
-				if(player.challenges[i]=="challenge16")player.challenges=player.challenges.splice(i,1);
+				if(player.challenges[i]=="challenge15")player.challenges.splice(i,1);
+				if(player.challenges[i]=="challenge16")player.challenges.splice(i,1);
 				if(player.challenges[i]=="postcngmm_1")player.challenges[i]="NG-4Rv3_IC1";
 				if(player.challenges[i]=="postcngmm_2")player.challenges[i]="NG-4Rv3_IC2";
 				if(player.challenges[i]=="postcngm3_1")player.challenges[i]="NG-4Rv3_IC3";
@@ -2437,8 +2441,28 @@ document.getElementById("importbtn").onclick = function () {
 				if(player.challenges[i]=="NG-4Rv3_IC2")player.challenges[i]="postc2";
 				if(player.challenges[i]=="NG-4Rv3_IC3")player.challenges[i]="postcngm3_1";
 			}
-			alert("You are loading a save from NG-4R v3. Autobuyers are reset.");
+		}
+		if(NGM4Rv3){
+			alert("You are loading a save from NG-4R v3. Autobuyers are reset, and you are forced to dimension boost with no rewards.");
 			player.autobuyers=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+			for(var i=1;i<=8;i++){
+				var td=player["timeDimension"+i];
+				td.amount=new Decimal(td.bought);
+				td.power=Decimal.pow(100,td.bought);
+				td.cost=new Decimal("1e99999999");
+				td.costAntimatter=new Decimal("1e99999999");
+				td.boughtAntimatter=0;
+				player["timeDimension"+i]=td;
+				player.timeShards=new Decimal(0);
+			}
+			player.timeless={
+				active: false,
+				shards: new Decimal(0),
+				points: new Decimal(0),
+				upgrades: [],
+				rebuyables: {
+				}
+			};
 		}
         save_game();
         load_game();
