@@ -1,4 +1,4 @@
-var newGame4MinusRespeccedVersion = 2.931
+var newGame4MinusRespeccedVersion = 2.932
 /*
 var temp=Math.log10;
 Math.log10=(function(a){if(a<0)debugger;b=this;return b(a);}).bind(temp);
@@ -2275,7 +2275,6 @@ function galaxyReset() {
 
 
     if (player.options.notation == "Emojis") player.spreadingCancer+=1;
-    if (player.spreadingCancer >= 10) giveAchievement("Spreading Cancer")
     if (player.spreadingCancer >= 1000000) giveAchievement("Cancer = Spread")
     if (player.achievements.includes("r36")) player.tickspeed = player.tickspeed.times(0.98);
     if (player.achievements.includes("r45")) player.tickspeed = player.tickspeed.times(0.98);
@@ -2584,7 +2583,7 @@ function gainedInfinityPoints() {
     if (player.infinityUpgrades.includes("postinfi60")) ret = ret.times(getB60Mult())
     if (player.achievements.includes("r43")) ret = ret.times(100);
     if (player.achievements.includes("r55")) ret = ret.times(Math.max(Math.log10(6000/player.bestInfinityTime), 1));
-    if (player.achievements.includes("r41")) ret = ret.times(Math.pow(Math.log10(player.spreadingCancer), .05)).times(2);
+    if (player.achievements.includes("r41")) ret = ret.times(2);
     if (player.achievements.includes("r51")) {
         let galaxies = player.galaxies
       	ret = ret.times(galaxies+1)
@@ -2689,7 +2688,7 @@ function setAchieveTooltip() {
     apocAchieve.setAttribute('ach-tooltip', "Get over " + formatValue(player.options.notation, 1e80, 0, 0) + " antimatter.");
     noPointAchieve.setAttribute('ach-tooltip', "Buy a single First Dimension when you have over " + formatValue(player.options.notation, 1e150, 0, 0) + " of them. Reward: First Dimensions are 10% stronger and you can max buy Dimension and Tickspeed Boosts.");
     forgotAchieve.setAttribute('ach-tooltip', "Get any Dimension multiplier over " + formatValue(player.options.notation, 1e31, 0, 0) + ". Reward: First Dimensions are 5% stronger and multiplier to ND based on product of all dims.");
-    sanic.setAttribute('ach-tooltip', "Have antimatter/sec exceed your current antimatter above " + formatValue(player.options.notation, 1e63, 0, 0));
+    sanic.setAttribute('ach-tooltip', "Get " + formatValue(player.options.notation, 1e63, 0, 0) + " antimatter.");
     potato.setAttribute('ach-tooltip', "Get more than " + formatValue(player.options.notation, 1e29, 0, 0) + " ticks per second. Reward: Reduces starting tick interval by 2%.");
     potato2.setAttribute('ach-tooltip', "Get more than " + formatValue(player.options.notation, 1e58, 0, 0) + " ticks per second. Reward: Reduces starting tick interval by 2%, and Tickspeed boost Infinity Dimensions at a very reduced rate.");
     potato3.setAttribute('ach-tooltip', "Get more than "+shortenCosts(new Decimal("1e8296262"))+" ticks per second.")
@@ -3445,7 +3444,8 @@ function checkForEndMe() {
         temp2 += player.infchallengeTimes[i]
     }
     infchallengeTimes = temp2
-    if (temp2 <= 66.6) giveAchievement("Yes. This is hell.")
+    if (temp2 <= 100) giveAchievement("Like jumping on a lego")
+    if (temp2 <= 10) giveAchievement("Never again")
 }
 
 
@@ -5802,7 +5802,6 @@ if(player.timeless.active)document.getElementById("eternitybtn").style.display =
     document.getElementById("infinitiedBank").style.display = (player.infinitiedBank > 0) ? "block" : "none"
     document.getElementById("infinitiedBank").textContent = "You have " + Math.floor(player.infinitiedBank).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " banked infinities."
 
-    if (infchallengeTimes < 7.5) giveAchievement("Never again")
     if (player.infinityPoints.gte(new Decimal("1e22000")) && player.timestudy.studies.length == 0) giveAchievement("What do I have to do to get rid of you")
     if (player.replicanti.galaxies >= 180*player.galaxies && player.galaxies > 0) giveAchievement("Popular music")
     if (player.eternityPoints.gte(Number.MAX_VALUE)) giveAchievement("But I wanted another prestige layer...")
@@ -6203,8 +6202,9 @@ if(player.timestudy.studies.includes(53))player.infinitiedBank += diff * infGain
         painTimer += player.options.updateRate/1000;
         if (painTimer >= 600) giveAchievement("Do you enjoy pain?");
     }
-
+	
     if(player.money.gt(Math.pow(10,63))) giveAchievement("Supersanic");
+	if(player.infinityUpgrades.length >= 16) giveAchievement("No DLC Required");
 
     for (let tier = 1; tier <= 8; ++tier) {
         var name = TIER_NAMES[tier];
