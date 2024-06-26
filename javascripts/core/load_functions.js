@@ -13,7 +13,7 @@ function onLoad() {
           animationOn: true
       }
   }
-  if (player.options.invert === true) player.options.theme = "Inverted"; player.options.invert = undefined;
+  if (player.options.invert === true) player.options.theme = "Inverted"; delete player.options.invert;
   if (player.options.notation === undefined) player.options.notation = "Standard"
   if (player.options.challConf === undefined) player.options.challConf = false
 if (player.options.notation === undefined) player.options.notation = "Standard";
@@ -50,7 +50,7 @@ if (player.options.notation === undefined) player.options.notation = "Standard";
     current: 0,
     pastResets: [{'resets': player.resets, 'bought': 0}]
   }
-  if (player.autobuyers === undefined) player.autobuyers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+  if (player.autobuyers === undefined) player.autobuyers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
   if (player.costMultipliers === undefined) player.costMultipliers = [new Decimal(1e3), new Decimal(1e4), new Decimal(1e5), new Decimal(1e6), new Decimal(1e8), new Decimal(1e10), new Decimal(1e12), new Decimal(1e15)]
   if (player.tickspeedMultiplier === undefined) player.tickspeedMultiplier = new Decimal(10)
   if (player.partInfinityPoint === undefined) player.partInfinityPoint = 0
@@ -110,10 +110,14 @@ if (player.options.notation === undefined) player.options.notation = "Standard";
   if (player.dilation.freeGalaxies === undefined) player.dilation.freeGalaxies = 0
   if (player.dilation.upgrades === undefined) player.dilation.upgrades = []
   if (player.dilation.rebuyables === undefined) player.dilation.rebuyables =  { 1: 0, 2: 0, 3: 0 }
-  if (player.timeDimension5 === undefined) player.timeDimension5 = {cost: new Decimal("1e2350"), amount: new Decimal(0), power: new Decimal(1), bought: 0 }
-  if (player.timeDimension6 === undefined) player.timeDimension6 = {cost: new Decimal("1e2650"), amount: new Decimal(0), power: new Decimal(1), bought: 0 }
-  if (player.timeDimension7 === undefined) player.timeDimension7 = {cost: new Decimal("1e3000"), amount: new Decimal(0), power: new Decimal(1), bought: 0 }
-  if (player.timeDimension8 === undefined) player.timeDimension8 = {cost: new Decimal("1e3350"), amount: new Decimal(0), power: new Decimal(1), bought: 0 }
+  if (player.timeDimension5 === undefined) player.timeDimension5 = {cost: new Decimal("1e2350"), amount: new Decimal(0), power: new Decimal(1), bought: 0 ,costAntimatter: new Decimal(1),
+        boughtAntimatter: 0}
+  if (player.timeDimension6 === undefined) player.timeDimension6 = {cost: new Decimal("1e2650"), amount: new Decimal(0), power: new Decimal(1), bought: 0 ,costAntimatter: new Decimal(1),
+        boughtAntimatter: 0}
+  if (player.timeDimension7 === undefined) player.timeDimension7 = {cost: new Decimal("1e3000"), amount: new Decimal(0), power: new Decimal(1), bought: 0 ,costAntimatter: new Decimal(1),
+        boughtAntimatter: 0}
+  if (player.timeDimension8 === undefined) player.timeDimension8 = {cost: new Decimal("1e3350"), amount: new Decimal(0), power: new Decimal(1), bought: 0 ,costAntimatter: new Decimal(1),
+        boughtAntimatter: 0}
   if (player.why === undefined) player.why = 0
   if (player.options.animations === undefined) player.options.animations = {floatingText: true, bigCrunch: true, eternity: true, tachyonParticles: true}
   if (player.galacticSacrifice === undefined) {
@@ -160,28 +164,28 @@ if (player.options.notation === undefined) player.options.notation = "Standard";
           amount: new Decimal(0),
           bought: 0,
           power: new Decimal(1),
-          baseAmount: 0
+          baseAmount: 0,
       }
       player.infinityDimension2 = {
           cost: new Decimal(1e9),
           amount: new Decimal(0),
           bought: 0,
           power: new Decimal(1),
-          baseAmount: 0
+          baseAmount: 0,
       }
       player.infinityDimension3 = {
           cost: new Decimal(1e10),
           amount: new Decimal(0),
           bought: 0,
           power: new Decimal(1),
-          baseAmount: 0
+          baseAmount: 0,
       }
       player.infinityDimension4 = {
           cost: new Decimal(1e20),
           amount: new Decimal(0),
           bought: 0,
           power: new Decimal(1),
-          baseAmount: 0
+          baseAmount: 0,
       }
       player.infDimensionsUnlocked = [false, false, false, false]
   }
@@ -196,25 +200,29 @@ if (player.options.notation === undefined) player.options.notation = "Standard";
           cost: new Decimal(1),
           amount: new Decimal(0),
           power: new Decimal(1),
-          bought: 0
+          bought: 0,costAntimatter: new Decimal(1),
+        boughtAntimatter: 0
       }
       player.timeDimension2 = {
           cost: new Decimal(5),
           amount: new Decimal(0),
           power: new Decimal(1),
-          bought: 0
+          bought: 0,costAntimatter: new Decimal(1),
+        boughtAntimatter: 0
       }
       player.timeDimension3 = {
           cost: new Decimal(100),
           amount: new Decimal(0),
           power: new Decimal(1),
-          bought: 0
+          bought: 0,costAntimatter: new Decimal(1),
+        boughtAntimatter: 0
       }
       player.timeDimension4 = {
           cost: new Decimal(1000),
           amount: new Decimal(0),
           power: new Decimal(1),
-          bought: 0
+          bought: 0,costAntimatter: new Decimal(1),
+        boughtAntimatter: 0
       }
   }
 
@@ -698,8 +706,7 @@ function load_game(root) {
 
 
 function save_game(changed, silent) {
-  if (window.location.href.split("//")[1].length > 20) set_save('ngm4rep', currentSave, player);
-  else set_save('ngm4rep', currentSave, player);
+  set_save('ngm4rep', currentSave, player);
   if (!silent) $.notify(changed ? "Game loaded" : "Game saved", "info")
 }
 

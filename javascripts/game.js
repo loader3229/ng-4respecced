@@ -1,4 +1,4 @@
-var newGame4MinusRespeccedVersion = 2.93
+var newGame4MinusRespeccedVersion = 2.931
 /*
 var temp=Math.log10;
 Math.log10=(function(a){if(a<0)debugger;b=this;return b(a);}).bind(temp);
@@ -990,6 +990,9 @@ function updateDimensions() {
 }
 
 function updateCosts() {
+	for (var i=1; i<=8; i++){
+		player[TIER_NAMES[i]+'TotalBought']=Math.max(player[TIER_NAMES[i]+'TotalBought']||player[TIER_NAMES[i]+'Bought'],player[TIER_NAMES[i]+'Bought']);
+	}
 	if(!((player.currentChallenge == "postc2" || player.currentChallenge == "challenge5") || (player.currentChallenge == "postc4" || player.currentChallenge == "challenge10") || !player.break)){
 		for (var i=1; i<=8; i++){
 			var name=TIER_NAMES[i];
@@ -2443,7 +2446,7 @@ document.getElementById("importbtn").onclick = function () {
 			}
 		}
 		if(NGM4Rv3){
-			alert("You are loading a save from NG-4R v3. Autobuyers are reset, and you are forced to dimension boost with no rewards.");
+			alert("You are loading a save from NG-4R v3. Autobuyers and time dimensions are reset.");
 			player.autobuyers=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 			for(var i=1;i<=8;i++){
 				var td=player["timeDimension"+i];
@@ -2465,9 +2468,10 @@ document.getElementById("importbtn").onclick = function () {
 			};
 		}
         save_game();
-        load_game();
-        updateChallenges()
-        transformSaveToDecimal()
+		document.location.reload();
+        //load_game();
+        //updateChallenges()
+        //transformSaveToDecimal()
     }
 };
 
