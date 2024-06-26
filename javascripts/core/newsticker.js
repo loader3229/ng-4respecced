@@ -193,7 +193,6 @@ function scrollNextMessage() {
 
     if (!player.options.newsHidden && !player.newsArray.includes(newsArray[nextMsgIndex][2])) {
         player.newsArray.push(newsArray[nextMsgIndex][2]);
-        if (player.newsArray.length>=50) giveAchievement("Fake News")
     }
 
 

@@ -629,6 +629,7 @@ function tickspeedSoftReset(bulk) {
   //if (bulk < 1) bulk = 1 (fixing issue 184)
   if (!player.break && player.money.gt(Number.MAX_VALUE)) return;
   player.tickspeedBoosts+=bulk;
+  giveAchievement("Fake News")
   if(player.infinityUpgrades.includes("skipResetGalaxy")) return;
   player.tickBoughtThisInf.pastResets.push({
     'resets': player.resets,

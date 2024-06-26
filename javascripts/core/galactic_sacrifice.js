@@ -264,6 +264,7 @@ function galacticSacrifice() {
     player.galacticSacrifice.galaxyPoints = player.galacticSacrifice.galaxyPoints.plus(gsAmount);
     player.galacticSacrifice.times++;
     player.galacticSacrifice.last = Date.now();
+	giveAchievement("Don't you dare to sleep")
     galaxyReset()
 }
 
